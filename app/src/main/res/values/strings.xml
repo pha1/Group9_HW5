@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Group9_HW5</string>
+    <string name="generate_button">Generate</string>
+    <string name="complexity">Select Complexity</string>
+    <string name="complexity_number">0</string>
+    <string name="times">Times</string>
+    <string name="progress_num">0</string>
+    <string name="slash">/</string>
+    <string name="progress_max">20</string>
+    <string name="average">Average:</string>
+    <string name="avg_number">#</string>
+    <string name="retrieved_number">#</string>
 </resources>
