@@ -8,7 +8,6 @@
 package com.example.group9_hw5;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
@@ -44,6 +43,11 @@ public class HeavyWork extends MainActivity implements Runnable{
 		}
 	}
 
+	/**
+	 * This method sends a message to the Main Thread with the progress and ArrayList
+	 * @param progress The current number retrieved
+	 * @param numbers The ArrayList of numbers retrieved
+	 */
 	private void sendMessage(int progress, ArrayList<Double> numbers){
 		Bundle bundle = new Bundle();
 		bundle.putInt("progress", (Integer)progress);
@@ -57,10 +61,14 @@ public class HeavyWork extends MainActivity implements Runnable{
 	@Override
 	public void run() {
 		for (int i = 0; i < complexityNumber; i++) {
+			// Count the progress
 			progress = i;
+			// Get the number and add it to the ArrayList
 			number = getNumber();
 			numbers.add(number);
+			// Send the message to the Main Thread
 			sendMessage(progress, numbers);
+			// Testing
 			Log.d(TAG, "run: " + progress);
 		}
 	}

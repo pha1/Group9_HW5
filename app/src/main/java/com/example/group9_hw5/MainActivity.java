@@ -46,39 +46,48 @@ public class MainActivity extends AppCompatActivity {
 
     ProgressBar progressBar;
     SeekBar seekBarComplexity;
+
     Button buttonGenerate;
+
     TextView complexity;
     TextView currentProgress;
     TextView maxProgress;
     TextView textViewAverage;
+
     ListView listView;
     ArrayAdapter<Double> adapter;
+
+    // Used to make the progress section visible when clicking on "Generate"
     ConstraintLayout progressLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         complexity = binding.textViewComplexity;
-        currentProgress = binding.currentProgress;
 
+        // Progress Components
+        currentProgress = binding.currentProgress;
+        textViewAverage = binding.textViewRetrievedAverage;
+        progressBar = binding.progressBar;
+
+        // Initial ListView
         listView = binding.listView;
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, numbers);
         listView.setAdapter(adapter);
-
-        textViewAverage = binding.textViewRetrievedAverage;
-        progressBar = binding.progressBar;
 
         handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
                 Log.d(TAG, "handleMessage: " + message.getData().getInt("progress"));
+                // Update number array
                 if (message.getData().containsKey("numbers")){
                     numbers = (ArrayList<Double>) message.getData().getSerializable("numbers");
+                    updateList(numbers);
                 }
+                // Update progress information
                 if (message.getData().containsKey("progress")) {
                     int progress = message.getData().getInt("progress") + 1;
                     progressBar.setMax(complexityHeavyWork);
@@ -86,18 +95,19 @@ public class MainActivity extends AppCompatActivity {
                     currentProgress.setText(String.valueOf(progress));
                 }
 
+                // Calculate the average of the numbers in the array
                 for (double number: numbers) {
                     average += number;
                 }
                 average = average/numbers.size();
                 textViewAverage.setText(String.valueOf(average));
-                updateList(numbers);
 
                 return true;
             }
         });
 
         // SeekBar function
+        // Sets the complexity values
         seekBarComplexity = binding.seekBarComplexity;
         seekBarComplexity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -119,22 +129,39 @@ public class MainActivity extends AppCompatActivity {
         buttonGenerate = binding.buttonGenerate;
         maxProgress = binding.maxProgress;
 
+        // Set thread pool size to 2
         threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 
         buttonGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Clear the ListView UI
+                adapter.clear();
+                adapter.notifyDataSetChanged();
+
+                // Reset the progress layout
                 currentProgress.setText("0");
                 maxProgress.setText(String.valueOf(complexityHeavyWork));
                 progressBar.setProgress(0);
+
+                // Make the progress visible
                 progressLayout.setVisibility(View.VISIBLE);
                 threadPool.execute(new HeavyWork(complexityHeavyWork));
             }
         });
     }
 
+    /**
+     * This method is used to update the ListView every time the ArrayList is updated.
+     * @param numbers The updated ArrayList
+     */
     public void updateList(ArrayList<Double> numbers) {
-        this.numbers = numbers;
-        adapter.notifyDataSetChanged();
+
+        listView = binding.listView;
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, numbers);
+        listView.setAdapter(adapter);
+
+        // Testing
+        Log.d(TAG, "Array size: " + this.numbers.size());
     }
 }
