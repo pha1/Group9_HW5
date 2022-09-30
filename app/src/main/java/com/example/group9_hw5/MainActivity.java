@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -33,19 +34,23 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     final static String TAG = "test";
 
-    Handler handler;
+    public static Handler handler;
 
     // Create Thread Pool
     ExecutorService threadPool;
     final static int THREAD_POOL_SIZE = 2;
     int complexityHeavyWork = 0;
+    double average;
 
     ArrayList<Double> numbers = new ArrayList<>();
 
+    ProgressBar progressBar;
     SeekBar seekBarComplexity;
     Button buttonGenerate;
     TextView complexity;
     TextView currentProgress;
+    TextView maxProgress;
+    TextView textViewAverage;
     ListView listView;
     ArrayAdapter<Double> adapter;
     ConstraintLayout progressLayout;
@@ -60,27 +65,37 @@ public class MainActivity extends AppCompatActivity {
         complexity = binding.textViewComplexity;
         currentProgress = binding.currentProgress;
 
+        listView = binding.listView;
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, numbers);
+        listView.setAdapter(adapter);
+
+        textViewAverage = binding.textViewRetrievedAverage;
+        progressBar = binding.progressBar;
+
         handler = new Handler(new Handler.Callback() {
             @Override
-            public boolean handleMessage(@NonNull Message message) {
-
+            public boolean handleMessage(Message message) {
+                Log.d(TAG, "handleMessage: " + message.getData().getInt("progress"));
                 if (message.getData().containsKey("numbers")){
                     numbers = (ArrayList<Double>) message.getData().getSerializable("numbers");
-                    adapter.notifyDataSetChanged();
                 }
                 if (message.getData().containsKey("progress")) {
-                    int progress = message.getData().getInt("progress");
-                    Log.d(TAG, "handleMessage: Progress" + progress);
-                    ((TextView) currentProgress).setText(progress);
+                    int progress = message.getData().getInt("progress") + 1;
+                    progressBar.setMax(complexityHeavyWork);
+                    progressBar.setProgress(progress);
+                    currentProgress.setText(String.valueOf(progress));
                 }
+
+                for (double number: numbers) {
+                    average += number;
+                }
+                average = average/numbers.size();
+                textViewAverage.setText(String.valueOf(average));
+                updateList(numbers);
+
                 return true;
             }
         });
-
-        listView = binding.listView;
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, numbers);
-
-        listView.setAdapter(adapter);
 
         // SeekBar function
         seekBarComplexity = binding.seekBarComplexity;
@@ -101,15 +116,25 @@ public class MainActivity extends AppCompatActivity {
         });
 
         progressLayout = binding.progressLayout;
-
         buttonGenerate = binding.buttonGenerate;
+        maxProgress = binding.maxProgress;
+
+        threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+
         buttonGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+                currentProgress.setText("0");
+                maxProgress.setText(String.valueOf(complexityHeavyWork));
+                progressBar.setProgress(0);
                 progressLayout.setVisibility(View.VISIBLE);
                 threadPool.execute(new HeavyWork(complexityHeavyWork));
             }
         });
+    }
+
+    public void updateList(ArrayList<Double> numbers) {
+        this.numbers = numbers;
+        adapter.notifyDataSetChanged();
     }
 }

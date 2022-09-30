@@ -8,6 +8,6 @@
     <string name="slash">/</string>
     <string name="progress_max">20</string>
     <string name="average">Average:</string>
-    <string name="avg_number">#</string>
+    <string name="avg_number"></string>
     <string name="retrieved_number">#</string>
 </resources>

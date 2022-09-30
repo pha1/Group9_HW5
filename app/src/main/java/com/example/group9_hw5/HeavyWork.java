@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -22,7 +21,6 @@ public class HeavyWork extends MainActivity implements Runnable{
 
 	final static String TAG = "test";
 
-	private Handler handler = new Handler();
 	private int progress;
 	private double number;
 	private ArrayList<Double> numbers = new ArrayList<>();
@@ -46,13 +44,14 @@ public class HeavyWork extends MainActivity implements Runnable{
 		}
 	}
 
-	public void sendMessage(int progress, ArrayList<Double> numbers){
+	private void sendMessage(int progress, ArrayList<Double> numbers){
 		Bundle bundle = new Bundle();
-		bundle.putInt("progress", progress);
-		bundle.putSerializable("numbers", numbers);
+		bundle.putInt("progress", (Integer)progress);
+		bundle.putSerializable("numbers",(ArrayList<Double>) numbers);
 		Message message = new Message();
 		message.setData(bundle);
-		handler.sendMessage(message);
+		MainActivity.handler.sendMessage(message);
+		Log.d(TAG, "sendMessage: " + message.getData().getInt("progress"));
 	}
 
 	@Override
