@@ -49,11 +49,18 @@ public class HeavyWork extends MainActivity implements Runnable{
 	 * @param numbers The ArrayList of numbers retrieved
 	 */
 	private void sendMessage(int progress, ArrayList<Double> numbers){
+		// Create Bundle and put data to be passed
 		Bundle bundle = new Bundle();
 		bundle.putInt("progress", (Integer)progress);
 		bundle.putSerializable("numbers",(ArrayList<Double>) numbers);
+
+		// Message to be sent by the handler
 		Message message = new Message();
+
+		// Set the bundle into the message
 		message.setData(bundle);
+
+		// This uses the Handler from Main Activity
 		MainActivity.handler.sendMessage(message);
 		Log.d(TAG, "sendMessage: " + message.getData().getInt("progress"));
 	}
@@ -63,11 +70,14 @@ public class HeavyWork extends MainActivity implements Runnable{
 		for (int i = 0; i < complexityNumber; i++) {
 			// Count the progress
 			progress = i;
+
 			// Get the number and add it to the ArrayList
 			number = getNumber();
 			numbers.add(number);
-			// Send the message to the Main Thread
+
+			// Call the sendMessage method from above
 			sendMessage(progress, numbers);
+
 			// Testing
 			Log.d(TAG, "run: " + progress);
 		}

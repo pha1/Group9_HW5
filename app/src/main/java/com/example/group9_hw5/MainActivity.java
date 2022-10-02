@@ -34,26 +34,29 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     final static String TAG = "test";
 
+    // Handler used for communicating between threads
     public static Handler handler;
 
     // Create Thread Pool
     ExecutorService threadPool;
     final static int THREAD_POOL_SIZE = 2;
+
+    // Data used to determine how many times to call the HeavyWork method
     int complexityHeavyWork = 0;
+
+    // The average of all numbers retrieved
     double average;
 
     ArrayList<Double> numbers = new ArrayList<>();
 
+    // UI components used throughout the Main Activity
     ProgressBar progressBar;
     SeekBar seekBarComplexity;
-
     Button buttonGenerate;
-
     TextView complexity;
     TextView currentProgress;
     TextView maxProgress;
     TextView textViewAverage;
-
     ListView listView;
     ArrayAdapter<Double> adapter;
 
@@ -65,10 +68,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setTitle("Main Activity");
 
         complexity = binding.textViewComplexity;
 
-        // Progress Components
+        // Progress Layout Components
         currentProgress = binding.currentProgress;
         textViewAverage = binding.textViewRetrievedAverage;
         progressBar = binding.progressBar;
@@ -85,11 +89,15 @@ public class MainActivity extends AppCompatActivity {
                 // Update number array
                 if (message.getData().containsKey("numbers")){
                     numbers = (ArrayList<Double>) message.getData().getSerializable("numbers");
+
+                    // This method call updates the ListView
                     updateList(numbers);
                 }
                 // Update progress information
                 if (message.getData().containsKey("progress")) {
                     int progress = message.getData().getInt("progress") + 1;
+
+                    // Update the current progress and max progress
                     progressBar.setMax(complexityHeavyWork);
                     progressBar.setProgress(progress);
                     currentProgress.setText(String.valueOf(progress));
@@ -135,14 +143,7 @@ public class MainActivity extends AppCompatActivity {
         buttonGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Clear the ListView UI
-                adapter.clear();
-                adapter.notifyDataSetChanged();
-
-                // Reset the progress layout
-                currentProgress.setText("0");
-                maxProgress.setText(String.valueOf(complexityHeavyWork));
-                progressBar.setProgress(0);
+                clearUi();
 
                 // Make the progress visible
                 progressLayout.setVisibility(View.VISIBLE);
@@ -163,5 +164,23 @@ public class MainActivity extends AppCompatActivity {
 
         // Testing
         Log.d(TAG, "Array size: " + this.numbers.size());
+    }
+
+    /**
+     * This is used to reset the UI Data in the case the user clicks "Generate" more than once.
+     */
+    public void clearUi() {
+        // Clear the ArrayList
+        average = 0;
+
+        // Clear the ListView UI
+        adapter.clear();
+        adapter.notifyDataSetChanged();
+
+        // Reset the progress layout
+        textViewAverage.setText("");
+        currentProgress.setText("0");
+        maxProgress.setText(String.valueOf(complexityHeavyWork));
+        progressBar.setProgress(0);
     }
 }

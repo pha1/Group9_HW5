@@ -63,6 +63,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="@string/average"
+            android:textSize="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/progressBar" />
 
@@ -72,6 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="@string/avg_number"
+            android:textSize="16dp"
             app:layout_constraintBottom_toBottomOf="@+id/textViewAverage"
             app:layout_constraintStart_toEndOf="@+id/textViewAverage"
             app:layout_constraintTop_toTopOf="@+id/textViewAverage" />
@@ -95,6 +97,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="@string/complexity"
+        android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/textViewComplexity"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textViewComplexity" />
@@ -118,6 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="@string/complexity_number"
+        android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/textViewTimes"
         app:layout_constraintEnd_toStartOf="@+id/textViewTimes"
         app:layout_constraintTop_toTopOf="@+id/textViewTimes" />
@@ -129,6 +133,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:text="@string/times"
+        android:textSize="16dp"
         app:layout_constraintBottom_toTopOf="@+id/seekBarComplexity"
         app:layout_constraintEnd_toEndOf="parent" />
 
